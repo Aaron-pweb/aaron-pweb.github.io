@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aaron Teshale — Python & Flask Developer</title>
+  <meta name="description" content="A personal portfolio showcasing my projects, skills, and experience in web development." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #0f1724;
+      --card: #0b1220;
+      --muted: #9aa4b2;
+      --accent: #7dd3fc;
+      --glass: rgba(255, 255, 255, 0.03);
+      --radius: 10px;
+      --gap: 18px;
+      --h2-gradient: linear-gradient(90deg, #e6eef6, #b0b9c7); /* NEW: Gradient for h2 */
+
+      color-scheme: dark;
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    html,
+    body {
+      width: 100%;
+      /* height: 100%; <-- This was removed to allow the page to scroll */
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, var(--bg), #071027 120%);
+      color: #e6eef6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding: 32px;
+      box-sizing: border-box; /* Ensures padding doesn't cause overflow */
+      display: flex;
+      align-items: flex-start; /* Aligns content to the top. */
+      justify-content: center;
+      min-height: 100vh; /* Use min-height for flex container */
+    }
+
+    /* Main layout wrapper */
+    .wrap {
+      width: 980px;
+      max-width: 96vw;
+      background: transparent;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: var(--gap);
+    }
+
+    /* Columns */
+    .left,
+    .right {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.015));
+      padding: 24px;
+      border-radius: var(--radius);
+      box-shadow: 0 6px 20px rgba(3, 8, 18, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .left {
+      display: flex;
+      flex-direction: column;
+      position: sticky; /* Makes the left column sticky */
+      top: 32px; /* Aligns sticky column with body padding */
+    }
+
+    /* PROFILE (square photo + name) */
+    .profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .avatar {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--accent);
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.02);
+      background: linear-gradient(180deg, rgba(125, 211, 252, 0.03), rgba(125, 211, 252, 0.01));
+    }
+
+    .avatar svg {
+      width: 85%;
+      height: 85%;
+      opacity: 0.95;
+      color: var(--muted);
+    }
+    
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin: 0
+    }
+
+    /* This is the regular h2 in the left column */
+    h2 {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0;
+      font-weight: 400;
+    }
+
+    .meta {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .pill {
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* square line accent separators */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.12), transparent);
+      margin: 16px 0;
+    }
+    
+    .right {
+      display: flex;
+      flex-direction: column;
+      gap: 24px; /* Space between sections */
+    }
+    
+    /* Sticky Header on Right */
+    .header-nav {
+      display: flex;
+      gap: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      background: var(--glass);
+      position: sticky;
+      top: 32px;
+      z-index: 10;
+      backdrop-filter: blur(5px);
+    }
+    
+    .header-nav a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    
+    .header-nav a:hover, .header-nav a.active {
+      background: rgba(125, 211, 252, 0.1);
+      color: #fff;
+    }
+
+    /* NEW: Style for section titles on the right */
+    .section-title {
+      margin: 0 0 16px 0;
+      font-size: 20px;
+      font-weight: 600;
+      /* Apply the text gradient */
+      background: var(--h2-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent; /* Fallback */
+    }
+
+    .intro {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      background: var(--glass)
+    }
+
+    .intro p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .skills {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 12px
+    }
+
+    .skill {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      padding: 12px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px
+    }
+
+    .skill b {
+      font-size: 13px
+    }
+
+    .skill small {
+      color: var(--muted)
+    }
+
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .proj {
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      padding: 16px;
+      border-radius: var(--radius);
+      background: var(--glass);
+      transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; /* NEW: Transition */
+    }
+    
+    /* NEW: Hover effect for projects */
+    .proj:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(3, 8, 18, 0.7);
+    }
+
+    .proj h3 {
+      margin: 0 0 6px 0
+    }
+
+    .proj p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    
+    .proj a {
+      font-size: 12px;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: 10px;
+      display: inline-block;
+      font-weight: 600;
+    }
+    .proj a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      grid-column: 1 / -1; /* Make footer span both columns */
+      margin-top: var(--gap); /* Add space above footer */
+      display: flex;
+      justify-content: space-between; /* Splits social and credit text */
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap; /* Allows wrapping on small screens */
+      padding-top: 16px; /* Padding above */
+      border-top: 1px solid rgba(255, 255, 255, 0.05); /* Divider above */
+    }
+
+    .contact {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: var(--glass);
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .contact:hover {
+      background: rgba(125, 211, 252, 0.1);
+      border-color: rgba(125, 211, 252, 0.2);
+    }
+    
+    .contact #copy-text {
+      font-weight: 600;
+      color: #fff;
+    }
+    .contact #copy-status {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .social {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .social a {
+      display: inline-grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      background: var(--glass);
+      color: var(--muted);
+      transition: all 0.2s ease;
+    }
+    .social a:hover {
+      background: rgba(125, 211, 252, 0.1);
+      border-color: rgba(125, 211, 252, 0.2);
+      color: #fff;
+    }
+
+    .social svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* responsive */
+    @media (max-width: 860px) {
+      body {
+        padding: 16px;
+        display: block; /* Switch from flex to block */
+      }
+      .wrap {
+        grid-template-columns: 1fr; /* Stack columns */
+      }
+      .left {
+        position: static; /* Un-stick the left column on mobile */
+        top: auto;
+      }
+      .header-nav {
+        position: static; /* Un-stick the header nav on mobile */
+        top: auto;
+        flex-wrap: wrap;
+      }
+      footer {
+        flex-direction: column; /* Stack footer items */
+        justify-content: center; /* Center them */
+        text-align: center;
+        margin-top: 24px;
+        gap: 12px;
+      }
+      .avatar {
+        width: 160px;
+        height: 160px
+      }
+      .projects {
+        grid-template-columns: 1fr;
+      }
+      .skills {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap" role="main">
+    <aside class="left">
+      <div class="profile">
+        <div class="avatar" id="avatar">
+          <img src="profile.jpg" draggable="false" alt="">
+        </div>
+        <div style="text-align:center;">
+          <h1 id="your-name">Aaron Teshale</h1>
+          <h2 id="tagline">Python • Flask • Web & Automation</h2>
+          <div class="meta">
+            <span class="pill">Python</span>
+            <span class="pill">Flask</span>
+            <span class="pill">Selenium</span>
+            <span class="pill">REST APIs</span>
+            <span class="pill">SQLAlchemy</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="right">
+      <!-- Page Navigation -->
+      <nav class="header-nav" aria-label="Page navigation">
+        <a href="#home">Home</a>
+        <a href="#projects">Projects</a>
+        <a href="#about">About & Contact</a>
+      </nav>
+
+      <!-- SECTION: HOME -->
+      <div id="home" class="page-section">
+        <h2 class="section-title">Home</h2>
+        <div class="intro">
+          <p><stron>Hello</stron>! I’m Aaron, a passionate <stron>Python developer</stron> and dedicated problem-solver. I'm not just writing code—I’m building solutions. 
+            I believe that with the right approach, almost any challenge can be solved through clean and purposeful engineering.
+          I find real satisfaction in taking complex problems, breaking them down, and crafting robust, maintainable solutions. 
+            Whether I’m developing backend services with <stron>Flask</stron> or creating smart automation scripts,
+            I’m committed to delivering software that is both powerful and precise.</p> 
+        </div>
+
+        <div class="skills" aria-label="skills list">
+          <div class="skill">
+            <b>Backend</b>
+            <small>Flask, REST APIs, SQLAlchemy, Sqlite</small>
+          </div>
+          <div class="skill">
+            <b>Automation</b>
+            <small>Selenium, browser automation, scraping & CI integration</small>
+          </div>
+          <div class="skill">
+            <b>Web</b>
+            <small>HTML, CSS, JavaScript, responsive UIs</small>
+          </div>
+          <div class="skill">
+            <b>Tools</b>
+            <small>Git, Linux (VM), CI (GitHub Actions)</small>
+          </div>
+        </div>
+      </div>
+      
+      <div class="divider"></div>
+
+      <!-- SECTION: PROJECTS -->
+      <div id="projects" class="page-section">
+        <h2 class="section-title">Projects</h2>
+        <div class="projects">
+          <!-- 6 Projects -->
+          <div class="proj">
+            <h3>Flask Web App</h3>
+            <p>A simple personal card website built using Flask and styled with an HTML5 UP template.</p>
+            <a href="https://github.com/Aaron-pweb/day-56">View on GitHub &rarr;</a>
+          </div>
+          <div class="proj">
+            <h3>AI Telegram Chat-BOT</h3>
+            <p>Automated Ai chat bot buil with  Google Gemini's api.</p>
+            <a href="https://t.me/mybot_bot_ai_bot">View on Telegram &rarr;</a>
+          </div>
+          <div class="proj">
+            <h3>Snake Game</h3>
+            <p>This is a simple Snake Game built using Python and the turtle graphics module.</p>
+            <a href="https://github.com/Aaron-pweb/snake-game">View on GitHub &rarr;</a>
+          </div>
+          <div class="proj">
+            <h3>Vigenère Cipher Python app– Encrypt & Decrypt Messages</h3>
+            <p> Python script that implements the Vigenère Cipher, one of the classic methods of encrypting alphabetic text using a keyword.</p>
+            <a href="https://github.com/Aaron-pweb/vigenere-cypher">View on GitHub &rarr;</a>
+          </div>
+          <div class="proj">
+            <h3>Project 5 Name</h3>
+            <p>Flash Card learning app built using Tkinter</p>
+            <a href="https://github.com/Aaron-pweb/day-31-FLASHY-APP">View on GitHub &rarr;</a>
+          </div>
+          <div class="proj">
+            <h3></h3>
+            <p>profile.</p>
+            <a href="https://github.com/Aaron-pweb">View on GitHub &rarr;</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="divider"></div>
+
+      <!-- SECTION: ABOUT & CONTACT -->
+      <div id="about" class="page-section">
+        <h2 class="section-title">About & Contact</h2>
+        
+        <div class="intro">
+          <p>A little more about me: I’m passionate about writing clean, efficient code and building solutions that make a difference. When I'm not at the keyboard, I love solving puzzles, playing football, and spending time reading—especially the Bible and other books that inspire me.</p>
+        </div>
+
+        <div style="margin-top:16px;">
+          <div class="contact" id="contact-btn" onclick="copyEmail(this)" role="button" tabindex="0" aria-label="Copy email to clipboard">
+            <div>
+              <div id="copy-status" style="font-size:13px; color:var(--muted);">Contact me via Email</div>
+              <div id="copy-text" style="font-weight:600">aaronteshale138@gmail.com</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </section>
+<footer>
+  <div class="social">
+    <a href="https://github.com/Aaron-pweb" aria-label="GitHub">
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.165 6.839 9.489.5.09.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.604-3.37-1.34-3.37-1.34-.454-1.157-1.11-1.465-1.11-1.465-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.685-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.804a9.564 9.564 0 012.518.337c1.91-1.294 2.748-1.025 2.748-1.025.546 1.377.202 2.394.1 2.647.64.701 1.028 1.594 1.028 2.685 0 3.843-2.337 4.687-4.566 4.935.359.308.678.92.678 1.854 0 1.338-.012 2.419-.012 2.748 0 .267.18.577.688.48C19.135 20.165 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+      </svg>
+    </a>
+    <a href="https://www.linkedin.com/in/aaron-teshale/" aria-label="LinkedIn">
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM8.5 18H6V9.5h2.5V18zM7.25 8.25A1.25 1.25 0 118.5 7a1.25 1.25 0 01-1.25 1.25zM18 18h-2.5v-4.5a1.5 1.5 0 00-3 0V18H10V9.5h2.5v1.225A2.75 2.75 0 0115.25 9c1.519 0 2.75 1.231 2.75 2.75V18z"/>
+      </svg>
+    </a>
+    <a href="https://x.com/AaronTeshale" aria-label="Twitter">
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.476l8.602-9.86L0 1.154h7.594l5.243 6.932L18.901 1.153zm-1.613 19.69h2.546L7.129 2.593H4.415l12.873 18.25z"/>
+      </svg>
+    </a>
+    <a href="https://t.me/The_Aaron_perspective" aria-label="Telegram">
+      <svg viewBox="0 0 50 50" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M25,2c12.703,0,23,10.297,23,23S37.703,48,25,48S2,37.703,2,25S12.297,2,25,2z M32.934,34.375 ..."></path>
+      </svg>
+    </a>
+  </div>
+      <div style="color:var(--muted); font-size:13px">
+        Aaron Teshael • Built with ❤️
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    function copyEmail(btn) {
+      const email = 'aaronteshale138@gmail.com';
+      const status = btn.querySelector('#copy-status');
+      const text = btn.querySelector('#copy-text');
+      const originalStatus = status.textContent;
+      const originalText = text.textContent;
+
+      try {
+        // Use execCommand for iframe compatibility
+        const input = document.createElement('textarea');
+        input.value = email;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        
+        // Show success
+        status.textContent = 'Copied to clipboard!';
+        text.textContent = email;
+        btn.style.borderColor = 'var(--accent)';
+        
+        // Reset after 2 seconds
+        setTimeout(() => {
+          status.textContent = originalStatus;
+          text.textContent = originalText;
+          btn.style.borderColor = '';
+        }, 2000);
+
+      } catch (err) {
+        // Fallback for rare cases
+        prompt('Failed to copy. Please copy manually:', email);
+      }
+    }
+
+  </script>
+</body>
+</html>
